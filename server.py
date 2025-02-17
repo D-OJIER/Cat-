@@ -37,7 +37,7 @@ def chat():
     user_message = data.get('message', '')
     session_id = data.get('session_id', 'default')
     
-    # Create or get existing chat session
+    # Create or get existing chat session 
     if session_id not in chat_sessions:
         chat_sessions[session_id] = model.start_chat(history=[])
     
