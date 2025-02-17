@@ -56,8 +56,9 @@ canvas {
   position: fixed; /* Change from absolute to fixed */
   top: 20px;
   right: 20px;
-  width: min(350px, calc(100vw - 40px)); /* Account for padding */
-  max-height: calc(100vh - 40px);
+  width: clamp(280px, 95vw, 450px); /* Increased max width from 350px to 450px */
+  height: auto;
+  max-height: calc(90vh - 40px); /* Leave some space at bottom */
   background: #2e7d32; /* Dark green instead of orange */
   color: #ffffff;
   border: 4px solid #1a1a1a;
@@ -65,7 +66,7 @@ canvas {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
-  padding: 15px;
+  padding: min(15px, 3vw); /* Responsive padding */
   font-family: "Arial", sans-serif;
   overflow-y: auto;
   overflow-x: hidden;
@@ -76,7 +77,7 @@ canvas {
 }
 
 .points-container p {
-  font-size: 28px;
+  font-size: clamp(14px, 4vw, 22px); /* Reduced from 20px, 28px */
   margin: 10px 0;
   font-weight: bold;
   text-shadow: 2px 2px 4px #1a1a1a;
@@ -84,7 +85,7 @@ canvas {
 }
 
 .points-container span {
-  font-size: 32px;
+  font-size: clamp(18px, 5vw, 26px); /* Reduced from 24px, 32px */
   font-weight: 600;
   color: #ffffff;
   text-shadow: 2px 2px 4px #1a1a1a;
@@ -106,7 +107,7 @@ canvas {
   margin: 8px 0;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 18px;
+  font-size: clamp(8px, 2.5vw, 12px); /* Reduced from 14px, 18px */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   transition: all 0.2s ease;
   overflow: hidden;
@@ -309,7 +310,7 @@ canvas {
 }
 
 .ability-description {
-    font-size: 14px;
+    font-size: clamp(6px, 2vw, 8px); /* Reduced from 12px, 14px */
     opacity: 0.8;
     font-style: italic;
     overflow: hidden;
@@ -353,11 +354,11 @@ canvas {
 
 .ability-name {
     font-weight: bold;
-    font-size: 18px;
+    font-size: clamp(10px, 2.5vw, 12px); /* Reduced from 16px, 18px */
 }
 
 .ability-level {
-    font-size: 14px;
+    font-size: clamp(6px, 2vw, 8px); /* Reduced from 12px, 14px */
     color: rgba(255, 255, 255, 0.9);
     padding: 2px 6px;
     border-radius: 4px;
@@ -365,7 +366,7 @@ canvas {
 }
 
 .ability-next {
-    font-size: 12px;
+    font-size: clamp(4px, 1.8vw, 6px); /* Reduced from 10px, 12px */
     color: rgba(255, 255, 255, 0.7);
     margin-top: 2px;
 }
@@ -396,7 +397,7 @@ canvas {
     flex-direction: column;
     gap: 2px;
     margin: 4px 0;
-    font-size: 14px;
+    font-size: clamp(6px, 2vw, 8px); /* Reduced from 12px, 14px */
 }
 
 .current-bonus {
@@ -431,22 +432,18 @@ canvas {
 /* Mobile adjustments */
 @media (max-width: 600px) {
     .points-container {
-        display: none;
+        width: calc(100vw - 40px);
+        top: auto;
+        bottom: 20px;
+        right: 20px;
+        max-height: 60vh;
     }
 
     .hamburger-menu {
         position: fixed;
         top: 10px;
         right: 10px;
-    }
-
-    #menuItems {
-        position: fixed;
-        top: 60px;
-        right: 10px;
-        width: min(350px, calc(100vw - 20px));
-        max-height: calc(100vh - 80px);
-        overflow-y: auto;
+        z-index: 1001;
     }
 
     .tab-container {
@@ -555,12 +552,11 @@ canvas {
 }
 
 .time-display .day-info {
-    font-size: 20px;
-    font-weight: bold;
+    font-size: clamp(16px, 3vw, 20px);
 }
 
 .time-display .time-info {
-    font-size: 16px;
+    font-size: clamp(14px, 2.5vw, 16px);
     color: #ffd700;
 }
 
