@@ -157,7 +157,7 @@ function createGameUpdateMessage(updateType, ...args) {
 async function sendGameUpdateToCat(updateType, ...args) {
     const message = createGameUpdateMessage(updateType, ...args);
     try {
-        const response = await fetch('http://localhost:5000/chat', {
+        const response = await fetch('https://cat-4-naym.onrender.com/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -905,7 +905,7 @@ async function sendMessage() {
         input.value = '';
         
         try {
-            const response = await fetch('http://localhost:5000/chat', {
+            const response = await fetch('https://cat-4-naym.onrender.com/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
