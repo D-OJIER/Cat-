@@ -179,6 +179,18 @@ async function sendGameUpdateToCat(updateType, ...args) {
 
 // Remove entire CloudGenerator class
 
+// Add near the top with other global variables
+const SOUNDS = {
+    click: new Audio('sounds/click.wav'),
+    purchase: new Audio('sounds/purchase.wav'),
+    chat: new Audio('sounds/chat.mp3')
+};
+
+// Ensure sounds are loaded with proper volume
+Object.values(SOUNDS).forEach(sound => {
+    sound.volume = 0.3; // Set to 30% volume
+});
+
 // Update addPoint function
 function addPoint(event) {
   const canvasRect = canvas.getBoundingClientRect();
@@ -191,6 +203,9 @@ function addPoint(event) {
   const catHeight = frameHeight * scale;
 
   if (mouseX >= catX && mouseX <= catX + catWidth && mouseY >= catY && mouseY <= catY + catHeight) {
+    SOUNDS.click.currentTime = 0; // Reset sound to start
+    SOUNDS.click.play();
+    
     const now = Date.now();
     if (now - lastClickTime < COMBO_TIMEOUT) {
         clickCombo++;
@@ -256,6 +271,8 @@ function buyAndEquip(item, cost, frames, width, height, newScale) {
     const upgrade = ABILITY_UPGRADES.DOUBLE_POINTS;
     if (!ABILITIES.DOUBLE_POINTS.unlocked) {
         if (score >= cost) {
+            SOUNDS.purchase.currentTime = 0;
+            SOUNDS.purchase.play();
             score -= cost;
             ABILITIES.DOUBLE_POINTS.unlocked = true;
             upgrade.currentLevel = 1;
@@ -268,6 +285,8 @@ function buyAndEquip(item, cost, frames, width, height, newScale) {
     } else if (upgrade.currentLevel < upgrade.maxLevel && currentDay >= upgrade.daysToUnlock[upgrade.currentLevel]) {
         const upgradeCost = upgrade.upgradeCosts[upgrade.currentLevel];
         if (score >= upgradeCost) {
+            SOUNDS.purchase.currentTime = 0;
+            SOUNDS.purchase.play();
             score -= upgradeCost;
             upgrade.currentLevel++;
             permanentMultiplier = upgrade.multipliers[upgrade.currentLevel - 1];
@@ -298,6 +317,8 @@ function buyAndEquip(item, cost, frames, width, height, newScale) {
 
   // Try to buy if not owned
   if (score >= cost) {
+    SOUNDS.purchase.currentTime = 0;
+    SOUNDS.purchase.play();
     score -= cost;
     document.getElementById("score").innerText = Math.round(score);
     
@@ -512,6 +533,8 @@ function buyAutoClicker() {
     const upgrade = ABILITY_UPGRADES.AUTO_CLICKER;
     if (!ABILITIES.AUTO_CLICKER.unlocked) {
         if (score >= upgrade.baseCost) {
+            SOUNDS.purchase.currentTime = 0;
+            SOUNDS.purchase.play();
             score -= upgrade.baseCost;
             ABILITIES.AUTO_CLICKER.unlocked = true;
             upgrade.currentLevel = 1;
@@ -524,6 +547,8 @@ function buyAutoClicker() {
     } else if (upgrade.currentLevel < upgrade.maxLevel && currentDay >= upgrade.daysToUnlock[upgrade.currentLevel]) {
         const upgradeCost = upgrade.upgradeCosts[upgrade.currentLevel];
         if (score >= upgradeCost) {
+            SOUNDS.purchase.currentTime = 0;
+            SOUNDS.purchase.play();
             score -= upgradeCost;
             upgrade.currentLevel++;
             updateAutoClickerRate();
@@ -816,6 +841,8 @@ function buyTimeAccelerator() {
     }
 
     if (score >= TIME_ACCELERATOR.cost) {
+        SOUNDS.purchase.currentTime = 0;
+        SOUNDS.purchase.play();
         score -= TIME_ACCELERATOR.cost;
         document.getElementById("score").innerText = Math.round(score);
         activateTimeAccelerator();
@@ -849,6 +876,10 @@ function toggleChat() {
 
 // Update addMessage function
 function addMessage(text, isUser) {
+    if (!isUser) {
+        SOUNDS.chat.currentTime = 0;
+        SOUNDS.chat.play();
+    }
     const messagesDiv = document.getElementById('chatMessages');
     const message = document.createElement('div');
     message.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
