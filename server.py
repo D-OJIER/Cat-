@@ -1,13 +1,17 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import os
 import google.generativeai as genai
+from dotenv import load_dotenv
+import os
 
 app = Flask(__name__)
 CORS(app)
 
-# Configure Gemini AI
-API_KEY = "AIzaSyBVXVhn7h1uvQ80ShVkMUuCcBtXWqX_Rdg"
+# Load environment variables from .env file
+load_dotenv()
+
+# Configure Gemini AI with API key from environment
+API_KEY = os.getenv("API_KEY")
 genai.configure(api_key=API_KEY)
 
 # Create the model with gaming personality
