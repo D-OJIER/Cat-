@@ -120,6 +120,48 @@ let permanentMultiplier = 1;
 let timeMultiplier = 1;
 let timeAcceleratorTimeout = null;
 
+// Replace GAME_UPDATE_RESPONSES with a function to create game update messages
+function createGameUpdateMessage(updateType, ...args) {
+    switch(updateType) {
+        case 'ABILITY_UPGRADE':
+            return `Hey Car(T), just upgraded ${args[0]} to level ${args[1]}!`;
+        case 'ABILITY_UNLOCK':
+            return `Car(T), I just unlocked ${args[0]}! What do you think?`;
+        case 'OUTFIT_PURCHASE':
+            return `Check out my new ${args[0]} outfit, Car(T)! How do I look?`;
+        case 'FAILED_PURCHASE':
+            return `Ugh, I can't afford ${args[0]} - it costs ${args[1]} points...`;
+        case 'TIME_ACCELERATOR':
+            return `Just activated the time accelerator, Car(T)! Going fast!`;
+        default:
+            return `Hey Car(T), something happened in the game!`;
+    }
+}
+
+// Update sendGameUpdateToCat function to only show AI's response
+async function sendGameUpdateToCat(updateType, ...args) {
+    const message = createGameUpdateMessage(updateType, ...args);
+    try {
+        const response = await fetch('http://localhost:5000/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                message: message,
+                session_id: SESSION_ID
+            })
+        });
+        
+        const data = await response.json();
+        // Only show the AI's response, not the game update message
+        addMessage(data.response, false);
+    } catch (error) {
+        console.error('Error:', error);
+        addMessage("Lost connection! Too many fish in the server? 🐟", false);
+    }
+}
+
 class CloudGenerator {
     constructor() {
         this.maxClouds = 3;
@@ -235,6 +277,9 @@ function buyAndEquip(item, cost, frames, width, height, newScale) {
             upgrade.currentLevel = 1;
             permanentMultiplier = upgrade.multipliers[0];
             updateAbilityButton('DOUBLE_POINTS', `Double Points (Level 1) - Next upgrade at day ${upgrade.daysToUnlock[1]}`);
+            sendGameUpdateToCat('ABILITY_UNLOCK', 'Double Points');
+        } else {
+            sendGameUpdateToCat('FAILED_PURCHASE', 'Double Points', cost);
         }
     } else if (upgrade.currentLevel < upgrade.maxLevel && currentDay >= upgrade.daysToUnlock[upgrade.currentLevel]) {
         const upgradeCost = upgrade.upgradeCosts[upgrade.currentLevel];
@@ -247,8 +292,10 @@ function buyAndEquip(item, cost, frames, width, height, newScale) {
                     ? `Double Points (Level ${upgrade.currentLevel}) - Next upgrade at day ${upgrade.daysToUnlock[upgrade.currentLevel]}`
                     : `Double Points (MAX Level ${upgrade.currentLevel})`
             );
+            sendGameUpdateToCat('ABILITY_UPGRADE', 'Double Points', upgrade.currentLevel);
         } else {
             showPopup('Not Enough Points', `You need ${upgradeCost} points to upgrade!`);
+            sendGameUpdateToCat('FAILED_PURCHASE', 'Double Points upgrade', upgradeCost);
         }
     }
     document.getElementById("score").innerText = score;
@@ -281,8 +328,11 @@ function buyAndEquip(item, cost, frames, width, height, newScale) {
     }
     
     switchOutfit(item, frames, width, height, newScale);
+    const outfitName = isOutfit2 ? "Box Outfit" : (isBlackCat ? "Black Cat" : "Unknown Outfit");
+    sendGameUpdateToCat('OUTFIT_PURCHASE', outfitName);
   } else {
     showPopup('Not Enough Points', `You need ${cost} points to buy this!`);
+    sendGameUpdateToCat('FAILED_PURCHASE', isOutfit2 ? "Box Outfit" : "Black Cat", cost);
   }
 }
 
@@ -483,6 +533,9 @@ function buyAutoClicker() {
             upgrade.currentLevel = 1;
             startAutoClicker();
             updateAutoClickerButton();
+            sendGameUpdateToCat('ABILITY_UNLOCK', 'Auto Clicker');
+        } else {
+            sendGameUpdateToCat('FAILED_PURCHASE', 'Auto Clicker', upgrade.baseCost);
         }
     } else if (upgrade.currentLevel < upgrade.maxLevel && currentDay >= upgrade.daysToUnlock[upgrade.currentLevel]) {
         const upgradeCost = upgrade.upgradeCosts[upgrade.currentLevel];
@@ -491,6 +544,9 @@ function buyAutoClicker() {
             upgrade.currentLevel++;
             updateAutoClickerRate();
             updateAutoClickerButton();
+            sendGameUpdateToCat('ABILITY_UPGRADE', 'Auto Clicker', upgrade.currentLevel);
+        } else {
+            sendGameUpdateToCat('FAILED_PURCHASE', 'Auto Clicker upgrade', upgradeCost);
         }
     }
     document.getElementById("score").innerText = score;
@@ -791,8 +847,10 @@ function buyTimeAccelerator() {
         score -= TIME_ACCELERATOR.cost;
         document.getElementById("score").innerText = score;
         activateTimeAccelerator();
+        sendGameUpdateToCat('TIME_ACCELERATOR');
     } else {
         showPopup('Not Enough Points', `You need ${TIME_ACCELERATOR.cost} points!`);
+        sendGameUpdateToCat('FAILED_PURCHASE', 'Time Accelerator', TIME_ACCELERATOR.cost);
     }
 }
 
