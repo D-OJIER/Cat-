@@ -35,7 +35,7 @@ const SEASONS = {
     WINTER: 'pink_2'
 };
 
-const DAY_DURATION = 10000; // 10 seconds per day
+const DAY_DURATION = 30000; // 30 seconds per day
 const HOURS_PER_DAY = 24;
 const MS_PER_HOUR = DAY_DURATION / HOURS_PER_DAY;
 let currentHour = 0;
@@ -219,7 +219,7 @@ function addPoint(event) {
     pointsToAdd = tripleIncomeActive ? pointsToAdd * 3 : pointsToAdd;
     
     score += pointsToAdd;
-    document.getElementById("score").innerText = score;
+    document.getElementById("score").innerText = Math.round(score);
     spawnFish(event.clientX, event.clientY);
   }
 }
@@ -282,7 +282,7 @@ function buyAndEquip(item, cost, frames, width, height, newScale) {
             sendGameUpdateToCat('FAILED_PURCHASE', 'Double Points upgrade', upgradeCost);
         }
     }
-    document.getElementById("score").innerText = score;
+    document.getElementById("score").innerText = Math.round(score);
     return;
   }
 
@@ -299,7 +299,7 @@ function buyAndEquip(item, cost, frames, width, height, newScale) {
   // Try to buy if not owned
   if (score >= cost) {
     score -= cost;
-    document.getElementById("score").innerText = score;
+    document.getElementById("score").innerText = Math.round(score);
     
     if (isOutfit2) {
       outfit2Bought = true;
@@ -533,7 +533,7 @@ function buyAutoClicker() {
             sendGameUpdateToCat('FAILED_PURCHASE', 'Auto Clicker upgrade', upgradeCost);
         }
     }
-    document.getElementById("score").innerText = score;
+    document.getElementById("score").innerText = Math.round(score);
 }
 
 function startAutoClicker() {
@@ -595,7 +595,7 @@ function updateDay() {
     currentHour = 0;
     timeProgress = 0;
     
-    if (seasonDay > 2) {
+    if (seasonDay > 7) { // Update to use DAYS_PER_SEASON
         seasonDay = 1;
         changeSeasons();
     }
@@ -632,20 +632,11 @@ function startDay() {
 }
 
 function updateDayDisplay() {
-    const seasonNames = {
-        [SEASONS.SPRING]: { name: 'Spring', icon: '🌸' },
-        [SEASONS.SUMMER]: { name: 'Summer', icon: '☀️' },
-        [SEASONS.AUTUMN]: { name: 'Autumn', icon: '🍂' },
-        [SEASONS.WINTER]: { name: 'Winter', icon: '❄️' }
-    };
-    
-    const season = seasonNames[currentSeason];
     const dayCounter = document.getElementById('dayCounter');
     dayCounter.className = 'time-display';
     dayCounter.innerHTML = `
         <div class="day-info">Day ${currentDay}</div>
         <div class="time-info">${formatHour(currentHour)}</div>
-        <div class="season-info">${season.icon} ${season.name} (Day ${seasonDay})</div>
         <div class="time-progress">
             <div class="time-progress-bar" style="width: ${timeProgress}%"></div>
         </div>
@@ -826,7 +817,7 @@ function buyTimeAccelerator() {
 
     if (score >= TIME_ACCELERATOR.cost) {
         score -= TIME_ACCELERATOR.cost;
-        document.getElementById("score").innerText = score;
+        document.getElementById("score").innerText = Math.round(score);
         activateTimeAccelerator();
         sendGameUpdateToCat('TIME_ACCELERATOR');
     } else {
