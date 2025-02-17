@@ -192,18 +192,16 @@ class CloudGenerator {
         cloud.src = `components/${this.currentSeason}/2.${cloudNumber}.png`;
         cloud.classList.add('cloud');
         
-        // Random vertical position
-        cloud.style.top = `${Math.random() * 60}vh`;
+        // Update vertical position to stay in upper area
+        cloud.style.top = `${Math.random() * 20}vh`; // Random position between 0-20% of viewport height
         
-        // Random direction
+        // Rest of existing cloud generation code...
         const direction = Math.random() < 0.5 ? 1 : -1;
         cloud.style.left = direction === 1 ? '100vw' : '-100px';
         
-        // Random size between 60% and 100% of base size
         const size = this.baseCloudSize * (0.6 + Math.random() * 0.4);
         cloud.style.width = `${size}px`;
         
-        // Random duration
         const duration = (Math.random() * (this.maxDuration - this.minDuration) + this.minDuration) * 1000;
         cloud.style.animation = `moveCloud${direction > 0 ? 'Left' : 'Right'} ${duration}ms linear`;
         

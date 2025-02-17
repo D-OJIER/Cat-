@@ -13,6 +13,8 @@ body {
   width: 100%;
   box-sizing: border-box;
   padding: 20px;
+  background-image: url("components/bg/lake.jpg");
+  background-size: contain;
 }
 
 body:active,
@@ -291,6 +293,7 @@ canvas {
   height: auto;
   z-index: -1;
   transform: scale(0.8);  /* Additional size reduction with transform */
+  top: 10vh !important; /* Force clouds to stay in upper area */
 }
 
 @keyframes moveCloudLeft {
@@ -909,7 +912,7 @@ canvas {
     justify-content: center;
     align-items: center;
     z-index: 9999;
-    opacity: 1;
+   -opa1city: 1;
     transition: opacity 1s ease-out;
     color: white;
     gap: 20px;
