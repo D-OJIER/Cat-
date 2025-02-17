@@ -20,6 +20,14 @@ let autoClickerLevel = 0;
 let autoClickerRate = 1000; // 1 click per second initially
 let activePopup = null;
 
+// Add near the top with other variables
+let clickCombo = 0;
+let lastClickTime = 0;
+let comboTimeout = null;
+const COMBO_TIMEOUT = 1000; // 1 second to maintain combo
+const COMBO_MULTIPLIER = 0.1; // Each combo adds 10% bonus
+const COMBO_UPDATE_THRESHOLD = 10; // Send message every 10 combos
+
 const SEASONS = {
     SPRING: 'blue_2',
     SUMMER: 'orange_2',
@@ -133,6 +141,13 @@ function createGameUpdateMessage(updateType, ...args) {
             return `Ugh, I can't afford ${args[0]} - it costs ${args[1]} points...`;
         case 'TIME_ACCELERATOR':
             return `Just activated the time accelerator, Car(T)! Going fast!`;
+        // Add to createGameUpdateMessage function
+        case 'COMBO':
+            return `${args[0]}x COMBO! Is that all you got?`;
+        case 'COMBO_BREAK':
+            return `Broke your ${args[0]}x combo! Too slow, just like in Valorant!`;
+        case 'SCORE_UPDATE':
+            return `Current score: ${args[0]} points. ${args[1] || ''}`;
         default:
             return `Hey Car(T), something happened in the game!`;
     }
@@ -221,6 +236,7 @@ class CloudGenerator {
     }
 }
 
+// Update addPoint function
 function addPoint(event) {
   const canvasRect = canvas.getBoundingClientRect();
   const mouseX = event.clientX - canvasRect.left;
@@ -232,8 +248,33 @@ function addPoint(event) {
   const catHeight = frameHeight * scale;
 
   if (mouseX >= catX && mouseX <= catX + catWidth && mouseY >= catY && mouseY <= catY + catHeight) {
+    const now = Date.now();
+    if (now - lastClickTime < COMBO_TIMEOUT) {
+        clickCombo++;
+        if (clickCombo % COMBO_UPDATE_THRESHOLD === 0) {
+            sendGameUpdateToCat('COMBO', clickCombo);
+        }
+    } else {
+        if (clickCombo >= COMBO_UPDATE_THRESHOLD) {
+            sendGameUpdateToCat('COMBO_BREAK', clickCombo);
+        }
+        clickCombo = 1;
+    }
+    lastClickTime = now;
+
+    // Clear existing timeout and set new one
+    if (comboTimeout) clearTimeout(comboTimeout);
+    comboTimeout = setTimeout(() => {
+        if (clickCombo >= COMBO_UPDATE_THRESHOLD) {
+            sendGameUpdateToCat('COMBO_BREAK', clickCombo);
+        }
+        clickCombo = 0;
+    }, COMBO_TIMEOUT);
+
     let pointsToAdd = permanentMultiplier;
+    pointsToAdd *= (1 + (clickCombo - 1) * COMBO_MULTIPLIER); // Add combo bonus
     pointsToAdd = tripleIncomeActive ? pointsToAdd * 3 : pointsToAdd;
+    
     score += pointsToAdd;
     document.getElementById("score").innerText = score;
     spawnFish(event.clientX, event.clientY);
@@ -966,6 +1007,45 @@ document.addEventListener('DOMContentLoaded', () => {
     addMessage("Well, well, well... Look who decided to join the party! Ready to get carried or what?", false);
 });
 
+// Add periodic score updates function
+function initializeScoreUpdates() {
+    setInterval(() => {
+        const messages = [
+            "Still stuck at",
+            "Grinding away at",
+            "Somehow managed to reach",
+            "Look who made it to",
+            "Not bad, sitting at",
+            "Your clicks got you to"
+        ];
+        const message = messages[Math.floor(Math.random() * messages.length)];
+        sendGameUpdateToCat('SCORE_UPDATE', score, message);
+    }, 30000); // Every 30 seconds
+}
+
+// Add near the top with other variables
+const TITLE_SCREEN_DURATION = 3000; // 3 seconds
+
+// Update the DOMContentLoaded event listener
+document.addEventListener('DOMContentLoaded', () => {
+    // Show title screen for specified duration
+    setTimeout(() => {
+        const titleScreen = document.getElementById('titleScreen');
+        titleScreen.classList.add('fade-out');
+        
+        // Remove from DOM after fade animation
+        setTimeout(() => {
+            titleScreen.remove();
+        }, 1000);
+    }, TITLE_SCREEN_DURATION);
+
+    // ...existing initialization code...
+    initializeButtonAnimations();
+    initializeSeasons();
+    updateTimeAcceleratorButton();
+    initializeScoreUpdates();
+});
+
 // Start animation when image loads
 loadSprite();
 
@@ -973,4 +1053,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeButtonAnimations();
     initializeSeasons();
     updateTimeAcceleratorButton();
+    initializeScoreUpdates(); // Add this line
 });
