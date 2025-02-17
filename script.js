@@ -114,6 +114,8 @@ const CART_RESPONSES = [
     "Is this your first time using a mouse? Because it shows! 😸"
 ];
 
+const SESSION_ID = 'session_' + Math.random().toString(36).substring(7);
+
 let permanentMultiplier = 1;
 let timeMultiplier = 1;
 let timeAcceleratorTimeout = null;
@@ -863,7 +865,8 @@ function getRandomResponse() {
     return CART_RESPONSES[Math.floor(Math.random() * CART_RESPONSES.length)];
 }
 
-function sendMessage() {
+// Update sendMessage function
+async function sendMessage() {
     const input = document.getElementById('messageInput');
     const text = input.value.trim();
     
@@ -871,10 +874,24 @@ function sendMessage() {
         addMessage(text, true);
         input.value = '';
         
-        // Simulate Car(T)'s response
-        setTimeout(() => {
-            addMessage(getRandomResponse(), false);
-        }, 1000);
+        try {
+            const response = await fetch('http://localhost:5000/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    message: text,
+                    session_id: SESSION_ID
+                })
+            });
+            
+            const data = await response.json();
+            addMessage(data.response, false);
+        } catch (error) {
+            console.error('Error:', error);
+            addMessage("Git gud! JK, I'm having connection issues! Try again?", false);
+        }
     }
 }
 
