@@ -177,62 +177,7 @@ async function sendGameUpdateToCat(updateType, ...args) {
     }
 }
 
-class CloudGenerator {
-    constructor() {
-        this.maxClouds = 3;
-        this.minDuration = 40;
-        this.maxDuration = 80;
-        this.baseCloudSize = 70;
-        this.currentSeason = SEASONS.SPRING;
-    }
-
-    createCloud() {
-        const cloud = document.createElement('img');
-        const cloudNumber = Math.floor(Math.random() * 67) + 1;
-        cloud.src = `components/${this.currentSeason}/2.${cloudNumber}.png`;
-        cloud.classList.add('cloud');
-        
-        // Update vertical position to stay in upper area
-        cloud.style.top = `${Math.random() * 20}vh`; // Random position between 0-20% of viewport height
-        
-        // Rest of existing cloud generation code...
-        const direction = Math.random() < 0.5 ? 1 : -1;
-        cloud.style.left = direction === 1 ? '100vw' : '-100px';
-        
-        const size = this.baseCloudSize * (0.6 + Math.random() * 0.4);
-        cloud.style.width = `${size}px`;
-        
-        const duration = (Math.random() * (this.maxDuration - this.minDuration) + this.minDuration) * 1000;
-        cloud.style.animation = `moveCloud${direction > 0 ? 'Left' : 'Right'} ${duration}ms linear`;
-        
-        document.body.appendChild(cloud);
-        cloudElements.push(cloud);
-        
-        cloud.addEventListener('animationend', () => {
-            cloud.remove();
-            cloudElements = cloudElements.filter(c => c !== cloud);
-            if (cloudElements.length < this.maxClouds) {
-                this.createCloud();
-            }
-        });
-    }
-
-    updateSeason(newSeason) {
-        this.currentSeason = newSeason;
-        // Update existing clouds with new season images
-        cloudElements.forEach(cloud => {
-            const currentPath = cloud.src;
-            const cloudNumber = currentPath.match(/2\.(\d+)\.png/)[1];
-            cloud.src = `components/${this.currentSeason}/2.${cloudNumber}.png`;
-        });
-    }
-
-    start() {
-        for (let i = 0; i < this.maxClouds; i++) {
-            setTimeout(() => this.createCloud(), i * 2000);
-        }
-    }
-}
+// Remove entire CloudGenerator class
 
 // Update addPoint function
 function addPoint(event) {
@@ -638,7 +583,6 @@ function updateAutoClickerButton() {
 }
 
 function initializeSeasons() {
-    cloudGenerator = new CloudGenerator();
     startDay();
     setInterval(updateDay, DAY_DURATION);
     setInterval(updateTime, 100); // Update time every 100ms for smooth progress
@@ -676,8 +620,6 @@ function changeSeasons() {
             currentSeason = SEASONS.SPRING;
             break;
     }
-    
-    cloudGenerator.updateSeason(currentSeason);
 }
 
 function clearClouds() {
@@ -686,7 +628,7 @@ function clearClouds() {
 }
 
 function startDay() {
-    cloudGenerator.start();
+    // Empty function or remove if not needed elsewhere
 }
 
 function updateDayDisplay() {
