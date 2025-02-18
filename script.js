@@ -25,8 +25,8 @@ let clickCombo = 0;
 let lastClickTime = 0;
 let comboTimeout = null;
 const COMBO_TIMEOUT = 1000; // 1 second to maintain combo
-const COMBO_MULTIPLIER = 0.1; // Each combo adds 10% bonus
-const COMBO_UPDATE_THRESHOLD = 10; // Send message every 10 combos
+const COMBO_MULTIPLIER = 0.01; // Each combo adds 10% bonus
+const COMBO_UPDATE_THRESHOLD = 50; // Send message every 10 combos
 
 const SEASONS = {
     SPRING: 'blue_2',
@@ -786,7 +786,7 @@ function updateTimeAcceleratorButton() {
             btn.innerHTML = `Locked (Unlocks Day ${TIME_ACCELERATOR.unlockDay})`;
         } else {
             btn.disabled = false;
-            btn.innerHTML = `Locked (${TIME_ACCELERATOR.cost} Points)`;
+            btn.innerHTML = `Time Skipper (${TIME_ACCELERATOR.cost} Points)`;
         }
     });
 }
