@@ -35,7 +35,7 @@ const SEASONS = {
     WINTER: 'pink_2'
 };
 
-const DAY_DURATION = 30000; // 30 seconds per day
+const DAY_DURATION = 45000; // 30 seconds per day
 const HOURS_PER_DAY = 24;
 const MS_PER_HOUR = DAY_DURATION / HOURS_PER_DAY;
 let currentHour = 0;
@@ -106,7 +106,7 @@ const ABILITY_INFO = {
 // Update TIME_ACCELERATOR constant
 const TIME_ACCELERATOR = {
     name: "Time Accelerator",
-    cost: 150,
+    cost: 1500,
     multiplier: 2.5,
     duration: 5000, // 5 seconds
     active: false,
@@ -771,7 +771,7 @@ function checkDayUnlocks() {
                     btn.classList.remove('can-upgrade');
                 }
             } else {
-                // ...existing maxed level code...
+                // maxed level code...
             }
         });
     });
@@ -1017,3 +1017,23 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTimeAcceleratorButton();
     initializeScoreUpdates(); // Add this line
 });
+
+
+let images = [
+    "components/bg/lake.jpg", 
+    "components/bg/night.jpg", 
+    "components/bg/flowerland.jpg",
+    "components/bg/autumn.jpg",
+    "components/bg/grass.jpg",
+    "components/bg/winter.jpg"
+];
+
+let currentIndex = 0;
+
+function changeBackground() {
+    document.body.style.backgroundImage = `url('${images[currentIndex]}')`;
+    currentIndex = (currentIndex + 1) % images.length;
+    setTimeout(changeBackground, currentIndex === 0 ? 20000 : 10000);
+}
+
+setTimeout(changeBackground, 10000);
