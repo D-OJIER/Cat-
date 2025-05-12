@@ -76,3 +76,11 @@ Whether you're a student, a gamer, or a hacker, Car(T)'s goal is the same:
 ## 🔗 Try it out
 
 [Play Roasts & Toasts](https://d-ojier.github.io/Cat-/)
+
+
+## 📸 Screenshots
+
+![Screenshot 2025-05-12 145519](https://github.com/user-attachments/assets/2630151e-410e-4b99-bd14-391ea59bc2ad)
+![Screenshot 2025-05-12 145214](https://github.com/user-attachments/assets/62dd2e82-84fa-491d-a823-81d0a0a10877)
+![Screenshot 2025-05-12 145122](https://github.com/user-attachments/assets/bb70c4f1-4595-4d3d-b91e-2a63d33ebc0c)
+
